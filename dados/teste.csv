@@ -1,0 +1,4 @@
+id,title,type,description,release_year,age_certification,runtime,genres,production_countries,seasons,imdb_id,imdb_score,imdb_votes,tmdb_popularity,tmdb_score
+s1,Dick Johnson Is Dead,Movie,""As her father nears the end of his life, filmmaker Kirsten Johnson stages his death in inventive and comical ways to help them both face the inevitable."",2020,R,90,"['Documentaries']","['United States']",0.0,tt000,7.0,500,10.0,7.0
+s10,The Starling,Movie,A woman adjusting to life after a loss contends with a feisty bird that's taken over her garden — and a husband who's struggling to find a way forward.,2021,R,90,"['Comedies','Dramas']","['United States']",0.0,tt000,7.0,500,10.0,7.0
+s100,On the Verge,TV Show,""Four women — a chef, a single mom, an heiress and a job seeker — dig into love and work, with a generous side of midlife crises, in pre-pandemic LA."",2021,R,90,"['TV Comedies','TV Dramas']","['France','United States']",0.0,tt000,7.0,500,10.0,7.0
