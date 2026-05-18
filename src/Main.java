@@ -11,12 +11,12 @@ public class Main {
     private static Set<String> todosOsGeneros = new TreeSet<>();
     private static Set<String> generosDeFilmes = new TreeSet<>();
     // Armazena o caminho global do arquivo para uso na leitura e escrita
-    private static final String CAMINHO_ARQUIVO = System.getProperty("user.dir") + "/dados/netflix_titles.csv"; 
+    private static final String CAMINHO_ARQUIVO = "dados/netflix_titles.csv"; 
 
     public static void main(String[] args) {
         ABB arvore = new ABB();
         Scanner leitor = new Scanner(System.in);
-        
+        System.out.println(CAMINHO_ARQUIVO);
         System.out.println("Iniciando o carregamento completo dos dados...");
         carregarDadosCSV(arvore, CAMINHO_ARQUIVO);
 
@@ -134,34 +134,78 @@ public class Main {
     }
 
     private static void carregarDadosCSV(ABB arvore, String caminhoArquivo) {
-        String linha = ""; int inseridos = 0; int ignorados = 0;
-        try (BufferedReader br = new BufferedReader(new FileReader(caminhoArquivo))) {
-            br.readLine(); 
-            while ((linha = br.readLine()) != null) {
-                String[] colunas = linha.split(",(?=(?:[^\"]*\"[^\"]*\")*[^\"]*$)");
-                if (colunas.length < 12) { ignorados++; continue; }
-                try {
-                    String id = colunas[0].trim(); String tipoShow = colunas[1].trim(); 
-                    String titulo = colunas[2].trim(); String descricao = colunas[colunas.length - 1].trim(); 
-                    int ano = Integer.parseInt(colunas[7].trim());
-                    List<String> p = processarListaCSV(colunas[5]); List<String> g = processarListaCSV(colunas[10]); 
-                    double score = 7.0; int votos = 500;
-                    if (colunas.length >= 15) {
-                        ano = Integer.parseInt(colunas[4].trim()); g = processarListaCSV(colunas[7]);
-                        p = processarListaCSV(colunas[8]); score = Double.parseDouble(colunas[11].trim());
-                        votos = Integer.parseInt(colunas[12].trim());
-                    }
-                    if (!g.isEmpty()) todosOsGeneros.addAll(g);
-                    if (!p.isEmpty()) todosOsPaises.addAll(p);
-                    if ("Movie".equalsIgnoreCase(tipoShow)) generosDeFilmes.addAll(g);
+    String linha = ""; 
+    int inseridos = 0; 
+    int ignoradosPorErroConversao = 0;
+    List<ProgramaNetFlix> listaTemporaria = new ArrayList<>();
 
-                    ProgramaNetFlix pg = new ProgramaNetFlix(id, titulo, tipoShow, descricao, ano, "R", 90, g, p, 0.0, "tt000", score, votos, 10.0, score);
-                    arvore.inserir(pg); inseridos++;
-                } catch (Exception e) { ignorados++; }
+    try (BufferedReader br = new BufferedReader(new FileReader(caminhoArquivo))) {
+        br.readLine(); // Pula o cabeçalho
+        
+        int idxId = 0, idxTitulo = 1, idxTipo = 2, idxDescricao = 3, idxAno = 4, idxGeneros = 7, idxPaises = 8;
+
+        while ((linha = br.readLine()) != null) {
+            String linhaTratada = linha.replace("\"\"", "\"");
+            String[] colunas = linhaTratada.split(",(?=(?:[^\"]*\"[^\"]*\")*[^\"]*$)");
+            
+            if (colunas.length < 9) {
+                ignoradosPorErroConversao++;
+                continue;
             }
-            System.out.println(">>> Carregamento concluído! Registros na árvore: " + inseridos);
-        } catch (IOException e) { System.out.println("Erro crítico: " + e.getMessage()); }
+            
+            try {
+                String id = colunas[idxId].trim(); 
+                String titulo = colunas[idxTitulo].trim().replace("\"", ""); 
+                String tipoShow = colunas[idxTipo].trim(); 
+                String descricao = colunas[idxDescricao].trim().replace("\"", "");
+                
+                String anoTexto = colunas[idxAno].replaceAll("[^0-9]", "").trim();
+                int ano = Integer.parseInt(anoTexto);
+                
+                List<String> g = processarListaCSV(colunas[idxGeneros]); 
+                List<String> p = processarListaCSV(colunas[idxPaises]); 
+                
+                double score = 7.0; 
+                int votos = 500;
+                
+                if (colunas.length >= 15) {
+                    try {
+                        score = Double.parseDouble(colunas[11].trim());
+                        votos = Integer.parseInt(colunas[12].trim().replaceAll("[^0-9]", ""));
+                    } catch (Exception e) {}
+                }
+
+                if (!g.isEmpty()) todosOsGeneros.addAll(g);
+                if (!p.isEmpty()) todosOsPaises.addAll(p);
+                if ("Movie".equalsIgnoreCase(tipoShow)) generosDeFilmes.addAll(g);
+
+                // Armazena na lista antes de pôr na árvore
+                ProgramaNetFlix pg = new ProgramaNetFlix(id, titulo, tipoShow, descricao, ano, "R", 90, g, p, 0.0, "tt000", score, votos, 10.0, score);
+                listaTemporaria.add(pg);
+                
+            } catch (Exception e) { 
+                ignoradosPorErroConversao++;
+            }
+        }
+        
+        // O TRUQUE: Embaralha os dados para que a árvore monte de forma ramificada e saudável
+        Collections.shuffle(listaTemporaria);
+        
+        // Agora insere na árvore de fato
+        for (ProgramaNetFlix pg : listaTemporaria) {
+            arvore.inserir(pg);
+            inseridos++;
+        }
+        
+        System.out.println("\n===== RELATÓRIO DEFINITIVO MACKENZIE =====");
+        System.out.println("-> Registros carregados do arquivo: " + (inseridos + ignoradosPorErroConversao));
+        System.out.println("-> Registros inseridos com SUCESSO na Árvore: " + inseridos);
+        System.out.println("==========================================\n");
+
+    } catch (IOException e) { 
+        System.out.println("Erro crítico ao abrir o arquivo: " + e.getMessage()); 
     }
+}
 
     private static List<String> processarListaCSV(String texto) {
         String limpo = texto.replace("[", "").replace("]", "").replace("'", "").replace("\"", "").trim();

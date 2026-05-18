@@ -42,12 +42,19 @@ public class ABB {
         NoABBBox(NoABB no) { this.no = no; }
     }
 
-    public int calcularAltura() { return obterAlturaRec(raiz); }
+    public int calcularAltura() {
+    return calcularAlturaRec(raiz);
+}
 
-    private int obterAlturaRec(NoABB no) {
-        if (no == null) return -1;
-        return Math.max(obterAlturaRec(no.esquerda), obterAlturaRec(no.direita)) + 1;
+private int calcularAlturaRec(NoABB no) {
+    if (no == null) {
+        return -1; // Árvore vazia tem altura -1 (ou 0 dependendo da convenção do seu professor)
     }
+    int alturaEsq = calcularAlturaRec(no.esquerda);
+    int alturaDir = calcularAlturaRec(no.direita);
+    
+    return 1 + Math.max(alturaEsq, alturaDir);
+}
 
     public Map<String, ProgramaNetFlix> obterFilmesMaisCurtidosPorGeneros(List<String> generosEscolhidos) {
         Map<String, ProgramaNetFlix> topFilmes = new HashMap<>();
