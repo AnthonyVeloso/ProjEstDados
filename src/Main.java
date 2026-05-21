@@ -47,7 +47,7 @@ public class Main {
 
             switch (opcao) {
                 case 0:
-                    System.out.print("Digite o nome ou caminho do arquivo CSV (Ex: dados/netflix_titles.csv ou dados/netflix_teste.csv): ");
+                    System.out.print("Digite o nome ou caminho do arquivo CSV (Ex: dados/netflix_titles.csv ou dados/teste.csv): ");
                     String nomeArquivo = leitor.nextLine().trim();
                     
                     // Sincroniza a variável global com a escolha do usuário
@@ -58,7 +58,6 @@ public class Main {
                     todosOsPaises.clear();
                     todosOsGeneros.clear();
                     generosDeFilmes.clear();
-                    
                     carregarDadosCSV(arvore, caminhoArquivoAtual);
                     break;
                     
@@ -365,7 +364,7 @@ public class Main {
         resultado.forEach((g, p) -> System.out.println("[" + g + "] " + (p != null ? p.getTitulo() + " (Nota IMDB: " + p.getNotaImdb() + ")" : "Nenhum filme encontrado")));
     }
 
-    private static void tratarTratarObjetivo2(ABB arvore, Scanner leitor) {}
+    
     private static void tratarObjetivo2(ABB arvore, Scanner leitor) {
         exibirOpcoesDisponiveis(true, null);
         System.out.print("Ano inicial do intervalo: "); int ini = leitor.nextInt();
