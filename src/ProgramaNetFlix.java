@@ -1,7 +1,12 @@
+//Integrantes do grupo:
+// Anthony Veloso 10737481
+// André Cintra 10738062
+// Luca Saboia 10736834
+
 import java.util.List;
 
 public class ProgramaNetFlix {
-    // Todos os 15 atributos definidos como privados (Conforme especificação do PDF)
+    // Todos os 15 atributos definidos como privados (Conforme especificação do PDF) --> impede que os dados sejam aterados indevidamente
     private String id;
     private String titulo;
     private String tipoShow; 

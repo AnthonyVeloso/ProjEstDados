@@ -1,14 +1,20 @@
+//Integrantes do grupo:
+// Anthony Veloso 10737481
+// André Cintra 10738062
+// Luca Saboia 10736834
+
 import java.util.*;
 
 public class ABB {
     private NoABB raiz;
 
     public ABB() {
-        this.raiz = null;
+        this.raiz = null; 
     }
 
     public NoABB getRaiz() { return this.raiz; }
 
+    //usa recursão chamando o método que realmente faz a lógica, e depois só retorna o resultado
     public void inserir(ProgramaNetFlix program) {
         raiz = inserirRec(raiz, program);
     }
@@ -18,18 +24,23 @@ public class ABB {
             raiz = new NoABB(program);
             return raiz;
         }
+        
+        //faz uma comaração lexicografica(alfabeto representado numericamente) entre os dados e a raiz
         if (program.getId().compareTo(raiz.dados.getId()) < 0) {
             raiz.esquerda = inserirRec(raiz.esquerda, program);
         } else if (program.getId().compareTo(raiz.dados.getId()) > 0) {
             raiz.direita = inserirRec(raiz.direita, program);
         }
         return raiz;
-    }
+    } //parei aqui
 
     public ProgramaNetFlix buscar(String id, int[] comparacoes) {
+        //usa a classe wrapper interna pra controlar o ponteiro de busca -> armazena o nó
         NoABBBox atual = new NoABBBox(raiz);
+        
+        //percorre a árvore até achar ou ser null 
         while (atual.no != null) {
-            comparacoes[0]++;
+            comparacoes[0]++; //contador que guarda o número de comparações
             if (id.equals(atual.no.dados.getId())) return atual.no.dados;
             if (id.compareTo(atual.no.dados.getId()) < 0) atual.no = atual.no.esquerda;
             else { atual.no = atual.no.direita; }
@@ -37,23 +48,26 @@ public class ABB {
         return null;
     }
     
+    //classe wrapper interna que serve para encapsular a referência do nó
     private static class NoABBBox {
         NoABB no;
         NoABBBox(NoABB no) { this.no = no; }
     }
 
+    //igual o método de inserir, o privado faz a lógica e aqui apenas chama
     public int calcularAltura() {
     return calcularAlturaRec(raiz);
-}
+    }
 
 private int calcularAlturaRec(NoABB no) {
     if (no == null) {
-        return -1; // Árvore vazia tem altura -1 (ou 0 dependendo da convenção do seu professor)
+        return -1; // Árvore vazia tem altura -1 
     }
+    //calcula a altura das subárvores usando recursão
     int alturaEsq = calcularAlturaRec(no.esquerda);
     int alturaDir = calcularAlturaRec(no.direita);
     
-    return 1 + Math.max(alturaEsq, alturaDir);
+    return 1 + Math.max(alturaEsq, alturaDir); //calculo que devolve a altura do no atual: soma do caminho mais longo entre os filhos e 1
 }
 
     public Map<String, ProgramaNetFlix> obterFilmesMaisCurtidosPorGeneros(List<String> generosEscolhidos) {

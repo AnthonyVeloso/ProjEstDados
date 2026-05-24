@@ -1,3 +1,8 @@
+//Integrantes do grupo:
+// Anthony Veloso 10737481
+// André Cintra 10738062
+// Luca Saboia 10736834
+
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.FileReader;
