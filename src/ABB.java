@@ -93,6 +93,7 @@ private int calcularAlturaRec(NoABB no) {
                 for (String generoBuscado : generos) {
                     //ajustando a formatação pra não dar erro na leitura 
                     String buscaMinusculo = generoBuscado.toLowerCase().trim();
+                    //como, cada filme tem mais de um gênero, a gente tem que percorrer a lista de cada objeto do filme pra ver se tem o gênero buscado 
                     for (String generoFilme : no.dados.getGeneros()) {
                         if (generoFilme.toLowerCase().trim().contains(buscaMinusculo)) {
                             ProgramaNetFlix topAtual = topFilmes.get(generoBuscado);
@@ -108,16 +109,23 @@ private int calcularAlturaRec(NoABB no) {
     }
 
     public Map<String, Integer> contarFilmesPorPaisEmPeriodo(int anoInicio, int anoFim) {
+        //de novo usando HashMap, é criado vazio(vai guardar o pais + contagem)
         Map<String, Integer> contagemPaises = new HashMap<>();
         percorrerParaContarFilmes(raiz, anoInicio, anoFim, contagemPaises);
         return contagemPaises;
     }
 
+    //de novo uso do percurso Em Ordem já que o dataset da netflix está organizado por id e não por ano, então tem que varrer tudo pra garantir que nenhum filme foi pulado
     private void percorrerParaContarFilmes(NoABB no, int anoInicio, int anoFim, Map<String, Integer> contagemPaises) {
         if (no != null) {
+            //começa percorrendo recursivamente a sub arvore esquerda
             percorrerParaContarFilmes(no.esquerda, anoInicio, anoFim, contagemPaises);
+            //verificação pra ver se atende ao intervalo
             if ("Movie".equalsIgnoreCase(no.dados.getTipoShow()) && no.dados.getAnoLancamento() >= anoInicio && no.dados.getAnoLancamento() <= anoFim) {
+                //assim como os generos, cada filme pode ter mais de um pais(co produtor), então tem que varrer a lista dos países de cada um
                 for (String pais : no.dados.getPaisesProducao()) {
+                    //usa .put pra guardar o pais no dicionario e 
+                    //usa o  método .getOrDefault como contador -> esse método verifica a quantidade de aparições do filme e soma o novo
                     contagemPaises.put(pais, contagemPaises.getOrDefault(pais, 0) + 1);
                 }
             }
