@@ -71,19 +71,27 @@ private int calcularAlturaRec(NoABB no) {
 }
 
     public Map<String, ProgramaNetFlix> obterFilmesMaisCurtidosPorGeneros(List<String> generosEscolhidos) {
+        //usamos HashMap pela complexidade 0(1)
         Map<String, ProgramaNetFlix> topFilmes = new HashMap<>();
-        for (String g : generosEscolhidos) topFilmes.put(g, null);
+        //já guarda no dicionario os generos, mas sem nenhum filme 
+        for (String g : generosEscolhidos) 
+            topFilmes.put(g, null);
+        //chama o método responsável por achar o filme mais curtido
         percorrerParaFilmesMaisCurtidos(raiz, generosEscolhidos, topFilmes);
         return topFilmes;
     }
 
+     //vai percorrer Em-Ordem cada lado da árore garantindo que todos os níos sejam verificados
     private void percorrerParaFilmesMaisCurtidos(NoABB no, List<String> generos, Map<String, ProgramaNetFlix> topFilmes) {
-        if (no != null) {
+        if (no != null) { //verifica a raiz pra ver se o nó existe
+            //desce recursivamente por toda a subarvore esquerda
             percorrerParaFilmesMaisCurtidos(no.esquerda, generos, topFilmes);
             
-            // FILTRO DE EXECUÇÃO: Garante que para o objetivo 1, apenas nós do tipo 'Movie' sejam avaliados
+            //usa o equals para pegar apenas os filmes(Movie)
             if ("Movie".equalsIgnoreCase(no.dados.getTipoShow())) {
+                //for é pra entrar em cada um dos 5 generos
                 for (String generoBuscado : generos) {
+                    //ajustando a formatação pra não dar erro na leitura 
                     String buscaMinusculo = generoBuscado.toLowerCase().trim();
                     for (String generoFilme : no.dados.getGeneros()) {
                         if (generoFilme.toLowerCase().trim().contains(buscaMinusculo)) {

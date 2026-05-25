@@ -358,24 +358,33 @@ public class Main {
     private static void tratarObjetivo1(ABB arvore, Scanner leitor) {
         exibirOpcoesDisponiveis(false, generosDeFilmes);
         System.out.println("\n--- Objetivo 1: Filme mais curtido por gênero ---");
-        List<String> escolhas = new ArrayList<>();
+        List<String> escolhas = new ArrayList<>(); //arraylist pra guardar as opções do usuario
         System.out.println("Digite exatamente 5 gêneros das opções acima:");
+        
         for (int i = 1; i <= 5; i++) {
             System.out.print("Gênero " + i + ": "); 
-            escolhas.add(leitor.nextLine().trim());
+            escolhas.add(leitor.nextLine().trim()); //método trim() remove qualquer espaço das pontas da string pra não dar erro na hora de buscar na árore(com o equals)
         }
+        
+        //o resultado da busca é armazenado no dicionário 'resultados', onde String é a chave/gênero e ProgramaNetFlix é o valor/objeto completo
         Map<String, ProgramaNetFlix> resultado = arvore.obterFilmesMaisCurtidosPorGeneros(escolhas);
         System.out.println("\nResultado da consulta:");
+        //para cada item no dicionario, se usa o ternário pra indicar o resutado ou a ausência dele 
         resultado.forEach((g, p) -> System.out.println("[" + g + "] " + (p != null ? p.getTitulo() + " (Nota IMDB: " + p.getNotaImdb() + ")" : "Nenhum filme encontrado")));
     }
 
     
     private static void tratarObjetivo2(ABB arvore, Scanner leitor) {
         exibirOpcoesDisponiveis(true, null);
-        System.out.print("Ano inicial do intervalo: "); int ini = leitor.nextInt();
-        System.out.print("Ano final do intervalo: "); int fim = leitor.nextInt(); leitor.nextLine();
+        System.out.print("Ano inicial do intervalo: "); 
+        int ini = leitor.nextInt();
+        System.out.print("Ano final do intervalo: "); 
+        int fim = leitor.nextInt(); 
+        leitor.nextLine(); //lida com o bug de espaço no buffer
+        //chama o método de contagem e armazena o resultado em um dicionario de chave=pais e valor=contagem
         Map<String, Integer> contagem = arvore.contarFilmesPorPaisEmPeriodo(ini, fim);
         System.out.println("\nResultado do volume de produções por país:");
+        //varre o dicionário e printa os resultados respectivos a cada país 
         contagem.forEach((p, q) -> System.out.println("-> " + p + ": " + q + " filmes lançados."));
     }
 
